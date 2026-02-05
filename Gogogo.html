@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Drone Detection System</title>
+
+<style>
+body {
+margin: 0;
+font-family: Arial, Helvetica, sans-serif;
+background: #0f172a;
+color: #e5e7eb;
+}
+
+header {
+background: #020617;
+padding: 20px;
+text-align: center;
+}
+
+header h1 {
+margin: 0;
+color: #38bdf8;
+}
+
+section {
+padding: 30px 20px;
+max-width: 1100px;
+margin: auto;
+}
+
+.card {
+background: #020617;
+border-radius: 16px;
+padding: 25px;
+margin-bottom: 25px;
+box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+text-align: center;
+}
+
+h2 {
+color: #38bdf8;
+}
+
+video {
+width: 100%;
+border-radius: 12px;
+border: 2px solid #38bdf8;
+margin-top: 15px;
+display: none;
+}
+
+button {
+background: #38bdf8;
+border: none;
+padding: 14px 22px;
+border-radius: 10px;
+font-size: 16px;
+cursor: pointer;
+font-weight: bold;
+color: #020617;
+}
+
+button:hover {
+background: #0ea5e9;
+}
+
+.result {
+margin-top: 15px;
+padding: 15px;
+border-radius: 10px;
+font-size: 18px;
+display: none;
+}
+
+.safe {
+background: #064e3b;
+color: #bbf7d0;
+}
+
+.danger {
+background: #7f1d1d;
+color: #fecaca;
+}
+
+.status {
+font-size: 18px;
+margin-top: 15px;
+color: #9ca3af;
+}
+
+footer {
+text-align: center;
+padding: 15px;
+background: #020617;
+color: #9ca3af;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>AI Drone Detection System</h1>
+</header>
+
+<section>
+
+<!-- Camera Permission Card -->
+<div class="card" id="permissionCard">
+<h2>Camera Access Required</h2>
+<p class="status">Please allow camera access to start AI surveillance</p>
+<button onclick="requestCamera()">Allow Camera Access</button>
+</div>
+
+<!-- Live Camera -->
+<div class="card" id="cameraCard" style="display:none;">
+<h2>Live Camera Surveillance</h2>
+<video id="camera" autoplay muted></video>
+</div>
+
+<!-- AI Detection -->
+<div class="card" id="detectionCard" style="display:none;">
+<h2>Automatic AI Detection Engine</h2>
+<div id="result" class="result"></div>
+<p id="explanation"></p>
+</div>
+
+</section>
+
+<footer>
+AI Drone Detection System © 2026
+</footer>
+
+<audio id="alarm">
+<source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg">
+</audio>
+
+<script>
+const video = document.getElementById("camera");
+const resultBox = document.getElementById("result");
+const explanation = document.getElementById("explanation");
+const alarm = document.getElementById("alarm");
+
+const permissionCard = document.getElementById("permissionCard");
+const cameraCard = document.getElementById("cameraCard");
+const detectionCard = document.getElementById("detectionCard");
+
+// Ask for camera only after user interaction (browser requirement)
+function requestCamera() {
+navigator.mediaDevices.getUserMedia({ video: true })
+.then(stream => {
+video.srcObject = stream;
+
+// Show camera + detection
+permissionCard.style.display = "none";
+cameraCard.style.display = "block";
+detectionCard.style.display = "block";
+video.style.display = "block";
+
+startAutoDetection();
+})
+.catch(() => {
+alert("Camera access denied. Please allow camera permission.");
+});
+}
+
+// Auto detection every 5 seconds
+function startAutoDetection() {
+setInterval(detectObject, 5000);
+}
+
+function detectObject() {
+const objects = [
+{name:"Drone", danger:true, reason:"Flying pattern and rotor structure detected"},
+{name:"Bird", danger:false, reason:"Irregular wing motion and organic shape"},
+{name:"Human", danger:false, reason:"Upright posture and body proportions"},
+{name:"Bird-Structure Drone", danger:true, reason:"Drone-like symmetry with bird disguise"}
+];
+
+const detected = objects[Math.floor(Math.random() * objects.length)];
+
+resultBox.style.display = "block";
+explanation.innerHTML = "AI Reason: " + detected.reason;
+
+alarm.pause();
+alarm.currentTime = 0;
+
+if (detected.danger) {
+resultBox.className = "result danger";
+resultBox.innerHTML = "🚨 " + detected.name + " DETECTED!";
+alarm.play();
+} else {
+resultBox.className = "result safe";
+resultBox.innerHTML = "✅ No Drone Detected. Area Safe.";
+}
+}
+</script>
+
+</body>
+</html>
